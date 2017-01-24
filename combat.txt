@@ -1,0 +1,295 @@
+
+TABLE OF CONTENTS
+1.Backbone Structure
+2.Damage formula
+3.Psuedocode
+4.Skill System
+5.All Moves
+6.Creative Part
+
+————————————————————————BACKBONE STRUCTURE————————————————————————————
+
+*NOTE: Player and Enemy use the same struct but we can typedef different names
+
+Player struct components:
+-NAME
+-DEAD
+
+-HP
+-HP_LOST
+-ATK
+-MATK
+-DEF
+-MDEF
+
+-MOVE1_ID
+-MOVE2_ID
+-MOVE3_ID
+-MOVE4_ID
+
+-MOVE_NAME
+_MOVE_ELEMENT
+-TYPE (either magical or physical)
+
+//Statuses
+-DOT
+-DOT_TURN
+-STUN
+-STUN_TURN
+-others
+
+//Debuffs
+-ATKDEB
+-ATKDEB_TURN
+-MATKDEB
+-MATKDEB_TURN
+-DEFDEB
+-DEFDEB_TURN
+-MDEFDEB
+-MDEFDEB_TURN
+-SPDDEB
+-SPDDEB_TURN
+
+//Buffs
+-ATKBUFF
+-ATKBUFF_TURN
+-MATKBUFF
+-MATKBUFF_TURN
+-DEFBUFF
+-DEFBUFF_TURN
+-MDEFBUFF
+-MDEFBUFF_TURN
+
+(USED BY ENEMY ONLY)
+-ENEMY_ID
+-MOVE5_ID
+-MOVE6_ID
+-MOVE7_ID
+-SPD
+-ELEMENT
+
+(USED BY PLAYERS ONLY)
+-CLASS_ID 
+
+*Everything is set to zero until a player chooses a class and battles
+
+————————————————————————————DAMAGE FORMULA——————————————————————————————————
+
+Physical attacks: (ATK * ATKBUFF * ATKDEB * MULTIPLIER)^2 / (DEF * DEFBUFF * DEFDEB)
+Magical attacks: (MATK * MATKBUFF * MATKDEB * MULTIPLIER * ELEMENT)^2 / (MDEF * MDEFBUFF * MDEFDEB)
+
+Player stats:
+HP: 3000-8000
+ATK: 0-800
+MATK: 0-800
+DEF: 200-500
+MDEF: 200-500
+
+Enemy stats:
+HP: 10-1000000
+ATK: 0-1000 (2000 will OTK a player with mac HP and DEF)
+DEF: <1000000
+MATK: 0-1000
+MDEF: <1000000
+
+————————————————————————————————PSUEDOCODE——————————————————————————————————
+
+//method returns a pre-made monster based on the ID you feed it
+Enemy getMonster(int ID){
+	Enemy a;
+
+	if (ID == 1){
+		//set struct components here
+	}
+	if (ID == 2){
+		
+	}
+	;;;;;;;;;;;;;;;
+	return a;
+}
+
+//Dungeon system? Not sure how to do this with networking
+int dungeons(Player party[]){
+	dungeonID = 1;
+	int easy[12] = {ID of monsters x 10}
+	int medium[12] = {ID of monsters x 10}
+	int hard[12] = {ID of monsters x 10}
+
+	int level = 0;
+	while (dungeonID == 1){
+		if (level == 12) dungeon++; 
+		else if (!fight(party,easy[level])){ 			
+			if (!level%3) levelup(party[], level/3);	//You level up every 3 fights (every 3rd fight is a "boss")
+			level++;
+		else {
+			resetskills(party,level);
+			level = 0;					//You fail and have to restart dungeon
+			printf("You failed hahahahhahahahhahhaha");
+		}
+	}
+	//dungeon 2
+	//dungeon 3
+}
+
+
+int fight(Player party[], enemy horde[]){
+	get the SPD for each enemy
+	enemies will go every SPD turns
+	Ex: if an enemy has SPD = 3, then 3 players will attack before enemy attacks
+	enemy chooses target by randomly picking a target from an array
+	int target[] = [1,1,2,2,3,3,4,4] 
+
+	*processes commands
+	Ex: use 1 2
+	process(Player, party[],horde[], 1, 2);
+
+	fights until everyone is party or horde is DEAD
+	returns int based on failure or success
+}
+
+
+int process(Player player, Player party[], Enemy horde[], int move, int target){
+	check what type is move
+	if single target healing/buffing:
+		attack(player, party[target], move);
+	if party healing/buffing:
+		loop through party and apply single heal to all;
+	if single target attack/debuffing:
+		attack(player, horde[target], move);
+	if AOE:
+		loop through party and apply single target damage to all;
+}
+
+————————————————————————————————ABILITY SYSTEM——————————————————————————————————
+
+Skill Method:
+
+int attack(player, target, move){
+	check player's class;
+	decrease all the timers on debuff and buffs for both player and target(if a timer reaches zero, turn buff/debuff back to 0)
+	decrease timers on stun and poison
+	
+	if (class == 1){						//Let's pretend 1 is "Warrior"
+		 if (move == 1){					//This would be "Swing"
+		 	if (player.MOVE1_ID == 1) {			//This would be base skill
+				target.HP_LOST += formula(player.ATK,player.ATKBUFF,player.ATKDEB,100% (this is multiplier),target.DEF,target.DEFBUFF,target.DEFDEB)
+			}
+			if (player.MOVE1_ID == 2) {			//This would be branch 1 of first upgrade. "Swing Break"
+				target.HP_LOST += ......
+				target.DEFDEB = 20;
+				target.DEFDEB_TURNS = 3;
+			}
+			if player.MOVE1_ID == 3) {			//This would be branch 2 of first upgrade. "Heavy Swing"
+				target.HP_LOST += ......
+				//More damage or something
+			}
+			//ETC.
+	}
+	if (class == 2){
+		.....
+	}
+	.......
+}
+
+int levelup(player, int ability){
+	int upgrade;
+	if (ability == 1) upgrade = player.MOVE1_ID;
+	if (ability == 2) upgrade = player.MOVE2_ID;
+	if (ability == 3) upgrade = player.MOVE3_ID;
+	if (ability == 4) upgrade = player.MOVE4_ID;
+	int choice1 = upgrade * 2;
+	int choice2 = upgrade * 2 + 1;
+	
+	//after choosing choice1/2
+	//will also print out statements (which will be stored somewhere)
+	set the player.MOVE#_ID to choice 1 or 2	
+}
+
+//If resetskills(player){
+	find player account file and replace all current values with those from the file
+}
+	
+	
+————————————————————————————————ABILITY SYSTEM——————————————————————————————————				
+//Try to make all choices balanced 
+
+Tank- defensive stats, low damage, team buffs
+	Shield Bash
+	1. ST 100% 
+		2. ST 130% 
+			4. ST 150% with 30% stun 
+				8. ST 150% with 70% stun 
+				9. ST 100% with 100% stun 
+			5. AOE 100% 
+				10. AOE 200% 
+				11. AOE 100% with 3 turn AOE 30% ATK buff 
+		3. ST 100% with 3 turn 20% DEF debuff 
+			6. ST 120% with 5 turn 30% DEF debuff 
+				12. AOE 100% with 3 turn 30% DEF debuff 
+				13. ST 130% with 5 turn 50% DEF debuff 
+			7. ST 120% with 5 turn 30% MDEF debuff 
+				14. AOE 100% with 3 turn 30% MDEF debuff 
+				15. ST 130% with 5 turn 50% MDEF debuff 
+	Protect
+	1. AOE 2 turn 20% DEF buff 
+		2. AOE 1 turn 70% DEF buff 
+			4. AOE 2 turn 70% DEF buff 
+				8. AOE 3 turn 70% DEF/MDEF buff  
+				9. AOE 5 turn 70% DEF buff  
+			5. AOE 1 turn 100% DEF buff 
+				10. AOE 1 turn 120% DEF/MDEF buff 
+				11. AOE 2 turn 120% DEF buff 
+		3. AOE 3 turn 20% DEF buff + 1 target stack  
+			6. AOE 3 turn 30% DEF buff + 2 target stack 
+				12. AOE 3 turn 30% DEF buff + 3 target stack  
+				13. AOE 3 turn 30% DEF/MDEF buff + 2 target stack
+			7. AOE 3 turn 30% DEF/MDEF buff + 1 target stack 
+				14. AOE 5 turn 50% DEF/MDEF buff + 1 target stack 
+				15. ST 100% with AOE 3 turn 50% DEF/MDEF buff + 1 target stack 
+		
+
+Warrior- balanced stats, medium damage, ST buffs and debuffs
+
+Mage- offensive magical stats, high damage, elemental coverage
+
+Hunter- offensive physical stats, high damage
+
+Healer- fragile stats, team buffs, team healing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

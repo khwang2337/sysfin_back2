@@ -1,0 +1,10 @@
+int a //Number of floors in the dungeon
+Floor 1
+character enemy // enemy stats in one line separated by space
+Floor 2
+character enemy //enemy stats in one line separated by space
+and so on until it reaches the last floor. // which is = to int a.
+
+NOTES:
+1.party is ready (this is already coded)
+2.

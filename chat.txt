@@ -1,0 +1,85 @@
+MAKE NOTE:
+    make last_message NOT NULL
+    
+same buffer???
+
+
+Chat
+    each forked server has their own sPID in character struct
+        client-servers communicate this way
+
+Client sends message to Server[X]
+
+filename - username
+password
+SPID
+stats
+
+lobby: 
+party:
+whisper Kevin: 
+
+Client needs to know own chat_setting
+lobby: hi
+buffer -> "0hi"
+"1hi"
+
+whisper <name/lastperson>: 
+server gets "0hi"
+
+whisper RESPONSE CLIENT
+Client needs to know last_whispered
+
+client does /r -> Server responds 
+
+Server updates shared memory
+    struct message
+        char * sPIDs "96_" has to be a space
+        char * message
+        
+Servers check shared memory 
+    fork off a server
+    makes a copy of last message
+    
+Sends update to Client
+    client needs to be reading
+        so chatSYS needs to read 
+        interfere with ENDCUR?
+        Unless ENDCUR reads ^^^ 
+        ENDCUR cant always be reading that's dumb
+        fork off another client? even dumber
+        ENDCUR 
+            while(1) reqINFO(); 
+                reqINFO() {
+                    readUPDATE
+                    etc.
+                }
+    CLIENT ALWAYS READING
+    
+                    
+        
+Client displays chat (just printf cant read lobby chat in dungeon) [X]
+
+SERVER UPDATES CLIENT
+
+CLIENT
+    read - display
+    write - CHAT
+
+SERVER
+    write - memcheck AND update
+    read - CHAT
+    
+    
+Client writes message to server
+Server reads message
+Server updates shared memory
+Servers read shared memory
+updates client, sends update
+Client sees is chat, prints, sees it's update, UPDATES
+    server has a needUPDATE var, if true sends update, if not doesnt        
+
+
+
+
+        

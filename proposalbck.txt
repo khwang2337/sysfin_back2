@@ -1,0 +1,60 @@
+PROPOSAL
+
+RPG
+
+Elements of the project:
+
+-A terminal session where a player can chat with other party members or input commands
+    a)The program will recognize a command by checking if there is a special character in the first index of the input (such as a colon)
+    b)Inputs without special characters will print as a normal message
+        Example:
+        Ricky types "heal me"
+        Kevin types "no"
+        Kevin types "/use 1 2"
+        Ricky types "i hate you"
+        
+        Display:
+        [Ricky] heal me
+        [Kevin] no
+        <Kevin> used Heal on <Matthew>!
+        [Ricky] i hate you
+        
+-A terminal session that displays sprites, player statistics, and move choices
+    a)Will be linked to the chat terminal through PIPES
+    b)Utilizes a HANDSHAKE to make sure the two terminals are connected
+    c)Makes decisions based on the output recieved from the chat terminal
+    
+-Party members will be linked through NETWORKING
+    a)every player's display terminal will update every time a move is made
+        -this will be done through network semaphores (IF WE CAN) or just through 
+        while checks that will make progress, will look into doing this through
+        some kind of overnetwork shared memory, or merely through read/writes 
+        which will be be a burden on the smooth gameplay experience we aim to create
+
+-GUI is comprised of two windows, one will be the aforementioned terminal and the
+other will be a terminal or a sdl window used purely as a graphical utility.
+
+-MECHANICS
+    -Party System
+        -Players can form parties in the lobby
+        -Party leader has the party powers: kick, delegate, etc.
+    
+    -Ready System
+        -The party leader can enter the dungeon after all the players are ready
+    
+    -Friend System(perhaps)
+    
+    -Dungeon-based Experience
+        -dungeons will be replayable
+        -the player must beat the lower-difficulty dungeons to access more difficult ones
+    
+    -Progression
+        -Players will get stronger through their SKILLS
+        -There are no LEVELS or STATS
+        -We may take this in two different directions
+            -Mastery System in which players can use and switch between any skills (in Lobby)
+            -Path System in which players choose to upgrade their skills at junctions (loses other option)
+            
+    
+        
+
